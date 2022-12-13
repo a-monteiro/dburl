@@ -164,6 +164,7 @@
 //		 Cznic QL (ql)                    | modernc.org/ql
 //		 CSVQ (csvq)                      | github.com/mithrandie/csvq
 //		 Databend (databend)              | github.com/datafuselabs/databend
+//		 Databricks (databricks)          | github.com/databricks/databricks-sql-go
 //		 Exasol (exasol)                  | github.com/exasol/exasol-driver-go
 //		 Firebird SQL (firebirdsql)       | github.com/nakagami/firebirdsql
 //		 Genji (genji)                    | github.com/genjidb/genji/sql/driver

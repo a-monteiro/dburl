@@ -500,6 +500,46 @@ func GenPresto(u *URL) (string, error) {
 	return z.String(), nil
 }
 
+// GenDatabricks generates a presto DSN from the passed URL.
+func GenDatabricks(u *URL) (string, error) {
+	z := &url.URL{
+		Scheme:   "https",
+		Opaque:   u.Opaque,
+		User:     u.User,
+		Host:     u.Host,
+		RawQuery: u.RawQuery,
+		Fragment: u.Fragment,
+	}
+
+	// force user
+	if z.User == nil {
+		z.User = url.User("token")
+	}
+	// force host
+	if z.Host == "" {
+		z.Host = "localhost"
+	}
+	// force port
+	if z.Port() == "" {
+		z.Host += ":443"
+	}
+	// add parameters
+	q := z.Query()
+	dbname, schema := strings.TrimPrefix(u.Path, "/"), ""
+	if dbname == "" {
+		dbname = "default"
+	} else if i := strings.Index(dbname, "/"); i != -1 {
+		schema, dbname = dbname[i+1:], dbname[:i]
+	}
+	q.Set("catalog", dbname)
+
+	if schema != "" {
+		q.Set("schema", schema)
+	}
+	z.RawQuery = q.Encode()
+	return z.String(), nil
+}
+
 // GenSnowflake generates a snowflake DSN from the passed URL.
 func GenSnowflake(u *URL) (string, error) {
 	host, port, dbname := u.Hostname(), u.Port(), strings.TrimPrefix(u.Path, "/")
