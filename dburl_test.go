@@ -74,6 +74,7 @@ func TestBadParse(t *testing.T) {
 		{`tablestore+tcp://`, ErrInvalidTransportProtocol},
 		{`bend://`, ErrMissingHost},
 		{`databend://`, ErrMissingHost},
+		{`databricks://`, ErrMissingHost},
 	}
 	for i, test := range tests {
 		_, err := Parse(test.s)
@@ -203,6 +204,7 @@ func TestParse(t *testing.T) {
 		{`tablestore+http://user:pass@localhost/instance_name`, `ots`, `http://user:pass@localhost/instance_name`, ``},
 		{`bend://user:pass@localhost/instance_name?sslmode=disabled&warehouse=wh`, `databend`, `bend://user:pass@localhost/instance_name?sslmode=disabled&warehouse=wh`, ``},
 		{`databend://user:pass@localhost/instance_name?tenant=tn&warehouse=wh`, `databend`, `databend://user:pass@localhost/instance_name?tenant=tn&warehouse=wh`, ``},
+		{`databricks://token:secret@localhost/cluster_id`, `databricks`, `https://token:secret@localhost:443/cluster_id`, ``},
 	}
 	for i, test := range tests {
 		u, err := Parse(test.s)
