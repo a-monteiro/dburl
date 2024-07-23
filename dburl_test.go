@@ -206,7 +206,7 @@ func TestParse(t *testing.T) {
 		{`databend://user:pass@localhost/instance_name?tenant=tn&warehouse=wh`, `databend`, `databend://user:pass@localhost/instance_name?tenant=tn&warehouse=wh`, ``},
 		{`databricks://token:secret@localhost/cluster_id`, `databricks`, `https://token:secret@localhost:443/cluster_id`, ``},
 		{`trino://host/catalogname/schemaname?source=sourcename`, `trino`, `http://user@host:8080?catalog=catalogname&schema=schemaname&source=sourcename`, ``},
-
+		{`trino://host/catalogname/schemaname?source=sourcename&extra_credentials=foo:bar`, `trino`, `http://user@host:8080?catalog=catalogname&extra_credentials=foo%3Abar&schema=schemaname&source=sourcename`, ``},
 	}
 	for i, test := range tests {
 		u, err := Parse(test.s)
