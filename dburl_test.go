@@ -55,7 +55,7 @@ func TestBadParse(t *testing.T) {
 		{`tablestore+tcp://`, ErrInvalidTransportProtocol},
 		{`bend://`, ErrMissingHost},
 		{`databend://`, ErrMissingHost},
-		{`databricks://`, ErrMissingHost},
+		{`databricks://`, ErrMissingUser},
 		{`unknown_file.ext3`, ErrInvalidDatabaseScheme},
 	}
 	for i, test := range tests {
