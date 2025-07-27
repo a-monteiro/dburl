@@ -12,6 +12,7 @@ import (
 	"path/filepath"
 	"regexp"
 	"runtime"
+	"slices"
 	"strings"
 
 	"github.com/xo/dburl"
@@ -52,12 +53,12 @@ func Parse(r io.Reader) ([]Entry, error) {
 		// split and check length
 		v := strings.Split(line, ":")
 		if len(v) != 6 {
-			return nil, &ErrInvalidEntry{i}
+			return nil, &InvalidEntryError{i}
 		}
 		// make sure no blank entries exist
-		for j := 0; j < len(v); j++ {
+		for j := range v {
 			if v[j] == "" {
-				return nil, &ErrEmptyField{i, j}
+				return nil, &EmptyFieldError{i, j}
 			}
 		}
 		entries = append(entries, NewEntry(v))
@@ -102,7 +103,7 @@ func ParseFile(file string) ([]Entry, error) {
 
 // Equals returns true when v matches the entry.
 func (entry Entry) Equals(v Entry, protocols ...string) bool {
-	return (entry.Protocol == "*" || contains(protocols, entry.Protocol)) &&
+	return (entry.Protocol == "*" || slices.Contains(protocols, entry.Protocol)) &&
 		(entry.Host == "*" || entry.Host == v.Host) &&
 		(entry.Port == "*" || entry.Port == v.Port)
 }
@@ -259,33 +260,23 @@ func (err *FileError) Unwrap() error {
 	return err.Err
 }
 
-// ErrInvalidEntry is the invalid entrty error.
-type ErrInvalidEntry struct {
+// InvalidEntryError is the invalid entry error.
+type InvalidEntryError struct {
 	Line int
 }
 
 // Error satisfies the error interface.
-func (err *ErrInvalidEntry) Error() string {
+func (err *InvalidEntryError) Error() string {
 	return fmt.Sprintf("invalid entry at line %d", err.Line)
 }
 
-// ErrEmptyField is the empty field error.
-type ErrEmptyField struct {
+// EmptyFieldError is the empty field error.
+type EmptyFieldError struct {
 	Line  int
 	Field int
 }
 
 // Error satisfies the error interface.
-func (err *ErrEmptyField) Error() string {
+func (err *EmptyFieldError) Error() string {
 	return fmt.Sprintf("line %d has empty field %d", err.Line, err.Field)
-}
-
-// contains determines if v contains s.
-func contains(v []string, s string) bool {
-	for _, z := range v {
-		if z == s {
-			return true
-		}
-	}
-	return false
 }
